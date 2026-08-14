@@ -7,7 +7,7 @@
     <style>
         * { box-sizing: border-box; font-family: 'Pyidaungsu', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 12px; }
-        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 100%; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         /* Header */
         .header { text-align: center; color: #a80000; font-weight: bold; }
@@ -26,20 +26,25 @@
         .btn-print { background: #0056b3; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 10px 0; }
         .btn-backup { background: #2b9348; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
         
-        /* Table Style */
-        .table-container { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; }
+        /* Table Style (Horizontal Layout) */
+        .table-container { overflow-x: auto; margin-top: 10px; width: 100%; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; min-width: 900px; }
         th, td { border: 1px solid #555; padding: 6px 3px; word-break: break-word; }
-        th { background-color: #f2f2f2; white-space: nowrap; font-weight: bold; color: #000; }
+        th { background-color: #f2f2f2; font-weight: bold; color: #000; }
 
-        /* Print Specific Styling */
+        /* Print Specific Styling (Forced Landscape Orientation) */
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
         @media print {
             body { background: white; padding: 0; margin: 0; }
-            .container { max-width: 100%; box-shadow: none; padding: 0; }
+            .container { max-width: 100%; box-shadow: none; padding: 0; border-radius: 0; }
             .no-print, .btn-save, .btn-backup, .btn-print, #searchInput, .section-label, input, select, button { display: none !important; }
-            .table-container { overflow: visible; margin-top: 5px; }
-            table { font-size: 10px; border: 1px solid #000; width: 100%; }
-            th, td { border: 1px solid #000 !important; padding: 6px 2px; }
+            .table-container { overflow: visible; margin-top: 5px; width: 100%; }
+            table { font-size: 10px; border: 1px solid #000; width: 100%; table-layout: fixed; }
+            th, td { border: 1px solid #000 !important; padding: 5px 2px; }
             .print-header-info { display: flex !important; justify-content: space-between; font-weight: bold; font-size: 12px; margin-bottom: 8px; border-bottom: 1px solid #000; padding-bottom: 4px; }
         }
 
@@ -112,7 +117,7 @@
                 <option value="">-- ယာဉ်အမှတ် ရွေးချယ်ပါ --</option>
                 <option value="5P-4779">5P-4779</option>
             </select>
-            <input type="date" id="recordDate" title="ရက်စွဲ ရွေးချယ်ပါ">
+            <input type="date" id="recordDate" title="ရက်စွဲ ရွေးချယ်ပါ" autocomplete="off">
         </div>
 
         <!-- KM Section -->
@@ -164,7 +169,7 @@
                 <tr>
                     <th rowspan="2">ရက်စွဲ</th>
                     <th rowspan="2">သုံးစွဲသူ</th>
-                    <th rowspan="2">အကြောင်းအရာ</th>
+                    <th rowspan="2">သုံးစွဲသည့်ကိစ္စ</th>
                     <th colspan="2">ခရီးစဉ်</th>
                     <th colspan="2">သုံးစွဲချိန်</th>
                     <th colspan="2">ခရီးအကွာအဝေး</th>
@@ -202,7 +207,9 @@
         document.getElementById('lblVehicleNo').innerText = vNo;
     }
 
+    // Page Load ဖြစ်ချိန်တွင် ရက်စွဲကို Auto မဝင်ဘဲ အလွတ်ထားမည်
     window.onload = function() {
+        document.getElementById('recordDate').value = "";
         updatePrintHeader();
         renderTable();
     };
@@ -313,5 +320,5 @@
     }
 </script>
 </body>
-    </html>
-    
+                </html>
+                
