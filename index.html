@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရှေ့ဆောင်ဘဏ် (MOB) Bank - ယာဉ်သုံးစွဲမှုမှတ်တမ်း</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; font-family: 'Pyidaungsu', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 12px; }
@@ -22,11 +20,6 @@
         
         .section-label { font-size: 13px; font-weight: bold; color: #002b66; margin-top: 12px; display: block; border-left: 4px solid #a80000; padding-left: 6px; }
 
-        /* GPS Box */
-        .gps-box { background: #eef9f1; border: 1px solid #b7e4c7; border-radius: 8px; padding: 10px; margin: 10px 0; }
-        .btn-gps { width: 100%; background: #2b9348; color: white; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        #map { height: 180px; width: 100%; border-radius: 8px; margin-top: 8px; border: 1px solid #ccc; background: #e5e5e5; }
-        
         /* Buttons */
         .auto-km { background: #f0f0f0; color: #a80000; font-weight: bold; }
         .btn-save { background: #d90429; color: white; border: none; width: 100%; padding: 12px; font-size: 15px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
@@ -43,7 +36,7 @@
         @media print {
             body { background: white; padding: 0; margin: 0; }
             .container { max-width: 100%; box-shadow: none; padding: 0; }
-            .no-print, .gps-box, .btn-save, .btn-backup, .btn-print, #searchInput, .section-label, input, select, button { display: none !important; }
+            .no-print, .btn-save, .btn-backup, .btn-print, #searchInput, .section-label, input, select, button { display: none !important; }
             .table-container { overflow: visible; margin-top: 5px; }
             table { font-size: 10px; border: 1px solid #000; width: 100%; }
             th, td { border: 1px solid #000 !important; padding: 4px 2px; }
@@ -65,17 +58,17 @@
 
     <!-- Print Header Info -->
     <div class="print-header-info">
-        <div>ယာဉ်အမှတ် - <span id="lblVehicleNo">5P-4779</span></div>
-        <div>(<span id="lblBranchName">မြောက်ဥက္ကလာပ</span>) ဘဏ်ခွဲ</div>
+        <div>ယာဉ်အမှတ် - <span id="lblVehicleNo">-</span></div>
+        <div>(<span id="lblBranchName">-</span>) ဘဏ်ခွဲ</div>
     </div>
 
     <!-- Branch, Vehicle & Date -->
     <div class="no-print">
         <span class="section-label">🏢 အခြေခံ အချက်အလက်များ</span>
         <select id="branchName" onchange="updatePrintHeader()">
+            <option value="">-- ဘဏ်ခွဲ ရွေးချယ်ပါ --</option>
             <option value="မြောက်ဥက္ကလာပ">မြောက်ဥက္ကလာပဘဏ်ခွဲ</option>
             <option value="ရုံးချုပ် (ရန်ကုန်)">ရုံးချုပ် (ရန်ကုန်)</option>
-            <option value="ရုံးချုပ်ဘဏ်ခွဲ">ရုံးချုပ်ဘဏ်ခွဲ</option>
             <option value="လမ်းမတော်">လမ်းမတော်ဘဏ်ခွဲ</option>
             <option value="ရွှေဘုံသာ">ရွှေဘုံသာဘဏ်ခွဲ</option>
             <option value="လသာ">လသာဘဏ်ခွဲ</option>
@@ -104,7 +97,7 @@
             <option value="ဟင်္သာတ">ဟင်္သာတဘဏ်ခွဲ</option>
             <option value="မြောင်းမြ">မြောင်းမြဘဏ်ခွဲ</option>
             <option value="မြန်အောင်">မြန်အောင်ဘဏ်ခွဲ</option>
-            <option value="အိမ္မဲ">အိမ္မဲဘဏ်ခွဲ</option>
+            <option value="အိမ်မဲ">အိမ်မဲဘဏ်ခွဲ</option>
             <option value="မကွေး">မကွေးဘဏ်ခွဲ</option>
             <option value="တောင်တွင်းကြီး">တောင်တွင်းကြီးဘဏ်ခွဲ</option>
             <option value="မုံရွာ">မုံရွာဘဏ်ခွဲ</option>
@@ -115,20 +108,15 @@
             <option value="မူဆယ်">မူဆယ်ဘဏ်ခွဲ</option>
         </select>
         <div class="row">
-            <input type="text" id="vehicleNo" value="5P-4779" placeholder="ယာဉ်အမှတ်" oninput="updatePrintHeader()">
+            <select id="vehicleNo" onchange="updatePrintHeader()">
+                <option value="">-- ယာဉ်အမှတ် ရွေးချယ်ပါ --</option>
+                <option value="5P-4779">5P-4779</option>
+            </select>
             <input type="date" id="recordDate" title="ရက်စွဲ">
         </div>
 
-        <!-- Real-Time GPS Tracking -->
-        <div class="gps-box">
-            <div style="font-weight: bold; color: #2d6a4f; font-size: 13px; margin-bottom: 5px;">📍 Live GPS Tracking</div>
-            <button id="gpsBtn" class="btn-gps" onclick="toggleGPS()">📍 Real-Time GPS စတင်ဖွင့်မည်</button>
-            <div id="gpsStatus" style="font-size: 11px; margin-top: 5px; color: #2d6a4f; font-weight: bold;">🔴 GPS ပိတ်ထားပါသည် (ဖွင့်ရန် အပေါ်မှ ခလုတ်ကို နှိပ်ပါ)</div>
-            <div id="map"></div>
-        </div>
-
         <!-- KM Section -->
-        <span class="section-label">🚗 ရေတွက်ကိရိယာ အညွှန်း (KM မှ / ထိ)</span>
+        <span class="section-label">🚗 အသုံးပြု Km (KM မှ / ထိ)</span>
         <div class="row">
             <input type="number" id="startKm" placeholder="KM (မှ)" oninput="calculateKm()">
             <button onclick="fetchLastKm()" style="width: auto; white-space: nowrap; font-size: 11px; padding: 10px;">နောက်ဆုံး KM ယူမည်</button>
@@ -182,7 +170,7 @@
                     <th rowspan="2">အကြောင်းအရာ</th>
                     <th colspan="2">ခရီးစဉ်</th>
                     <th colspan="2">သုံးစွဲချိန်</th>
-                    <th colspan="2">ရေတွက်ကိရိယာ အညွှန်း</th>
+                    <th colspan="2">အသုံးပြု KM အညွှန်း</th>
                     <th rowspan="2">အသုံးပြု KM</th>
                     <th rowspan="2">ထည့်သွင်း ဆီ (Liter)</th>
                     <th rowspan="2">စစ်ဆေးသူ</th>
@@ -206,12 +194,7 @@
     <button onclick="clearAllData()" style="background: #6c757d; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; font-size: 11px;" class="no-print">🗑️ စာရင်းအားလုံးရှင်းမည်</button>
 </div>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    let map, marker, accuracyCircle;
-    let gpsWatchId = null;
-    let isGpsActive = false;
     let records = JSON.parse(localStorage.getItem('mob_vehicle_records')) || [];
 
     function setTodayDate() {
@@ -223,8 +206,8 @@
     }
 
     function updatePrintHeader() {
-        const bName = document.getElementById('branchName').value || "မြောက်ဥက္ကလာပ";
-        const vNo = document.getElementById('vehicleNo').value || "5P-4779";
+        const bName = document.getElementById('branchName').value || "-";
+        const vNo = document.getElementById('vehicleNo').value || "-";
         document.getElementById('lblBranchName').innerText = bName;
         document.getElementById('lblVehicleNo').innerText = vNo;
     }
@@ -232,99 +215,8 @@
     window.onload = function() {
         setTodayDate();
         updatePrintHeader();
-        initMap();
         renderTable();
     };
-
-    function initMap() {
-        if (!map) {
-            map = L.map('map').setView([16.8409, 96.1735], 15);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-            marker = L.marker([16.8409, 96.1735]).addTo(map);
-        }
-        setTimeout(() => map.invalidateSize(), 500);
-    }
-
-    function toggleGPS() {
-        if (isGpsActive) stopGPS();
-        else startGPS();
-    }
-
-    function startGPS() {
-        if (!navigator.geolocation) {
-            alert("သင့်ဖုန်းတွင် GPS စနစ် မပံ့ပိုးပါ။");
-            return;
-        }
-
-        isGpsActive = true;
-        const btn = document.getElementById('gpsBtn');
-        const status = document.getElementById('gpsStatus');
-        btn.innerText = "🔄 GPS တည်နေရာ ရှာဖွေနေပါသည်...";
-        btn.style.background = "#e63946";
-        status.innerText = "📡 GPS Signal ဖမ်းယူနေပါသည် (ဖုန်း၏ Location ဖွင့်ထားပါ)...";
-
-        const handleSuccess = (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const accuracy = position.coords.accuracy;
-            const newLatLng = new L.LatLng(lat, lng);
-
-            initMap();
-            marker.setLatLng(newLatLng);
-            map.setView(newLatLng, 16);
-            setTimeout(() => map.invalidateSize(), 300);
-
-            if (accuracyCircle) map.removeLayer(accuracyCircle);
-            accuracyCircle = L.circle(newLatLng, { radius: accuracy, color: '#2b9348', fillOpacity: 0.2 }).addTo(map);
-
-            btn.innerText = "🟢 Real-Time GPS ဖွင့်ထားသည် (ရပ်ရန်နှိပ်ပါ)";
-            btn.style.background = "#2b9348";
-            status.innerText = `📍 လက်ရှိတည်နေရာ: Lat ${lat.toFixed(5)}, Lng ${lng.toFixed(5)} (တိကျမှု ±${Math.round(accuracy)}m)`;
-        };
-
-        const handleError = (error) => {
-            let msg = "GPS တည်နေရာ ယူ၍ မရပါ။ ";
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    msg += "ဖုန်း Browser မှ Location Permission ပိတ်ထားပါသည်။ Settings တွင် Access ပေးပါ။";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    msg += "GPS Signal မရရှိပါ။ အပြင်ဘက်ထွက်၍ ပြန်စမ်းပါ။";
-                    break;
-                case error.TIMEOUT:
-                    msg += "အချိန်ကြာမြင့်သွားပါသည်။ ပြန်လည် ကြိုးစားပါ။";
-                    break;
-                default:
-                    msg += error.message;
-            }
-            status.innerText = "⚠️ " + msg;
-            btn.innerText = "📍 Real-Time GPS စတင်ဖွင့်မည်";
-            btn.style.background = "#2b9348";
-            isGpsActive = false;
-        };
-
-        navigator.geolocation.getCurrentPosition(handleSuccess, (err) => {
-            navigator.geolocation.getCurrentPosition(handleSuccess, handleError, { enableHighAccuracy: false, timeout: 10000 });
-        }, { enableHighAccuracy: true, timeout: 15000 });
-
-        if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
-        gpsWatchId = navigator.geolocation.watchPosition(handleSuccess, null, { enableHighAccuracy: false, maximumAge: 5000 });
-    }
-
-    function stopGPS() {
-        if (gpsWatchId !== null) {
-            navigator.geolocation.clearWatch(gpsWatchId);
-            gpsWatchId = null;
-        }
-        if (accuracyCircle) map.removeLayer(accuracyCircle);
-        isGpsActive = false;
-        document.getElementById('gpsBtn').innerText = "📍 Real-Time GPS စတင်ဖွင့်မည်";
-        document.getElementById('gpsBtn').style.background = "#2b9348";
-        document.getElementById('gpsStatus').innerText = "🔴 GPS ပိတ်ထားပါသည်";
-    }
 
     function calculateKm() {
         const start = parseFloat(document.getElementById('startKm').value) || 0;
@@ -411,4 +303,32 @@
         document.getElementById('usedKm').value = '0';
         document.getElementById('fromLoc').value = '';
         document.getElementById('toLoc').value = '';
-  
+        document.getElementById('purpose').value = '';
+        document.getElementById('fuelLiter').value = '';
+        document.getElementById('userName').value = '';
+        document.getElementById('driverName').value = '';
+        document.getElementById('checkerName').value = '';
+        document.getElementById('remark').value = '';
+    }
+
+    function clearAllData() {
+        if (confirm("မှတ်တမ်း အားလုံးကို ဖျက်ပစ်ရန် သေချာပါသလား?")) {
+            records = [];
+            localStorage.removeItem('mob_vehicle_records');
+            renderTable();
+        }
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "MOB_Vehicle_Records_Backup.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+</script>
+</body>
+                                                          </html>
+          အညွှန်းကိရိယာ
